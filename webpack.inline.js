@@ -1,13 +1,12 @@
 const path = require('path')
 const webpack = require('webpack')
-const handleModulePath = require('./tools/handleModulePath')
 
 const ipAddress = 'localhost'
 const port = 3061
 
 module.exports = {
   entry: [
-    './src/index.tsx'
+    './src/index.js'
   ],
   devServer: {
     hot: true,
@@ -25,11 +24,14 @@ module.exports = {
     chunkFilename: '[name].chunk.js'
   },
   resolve: {
-    extensions: ['.js', 'jsx', '.ts', '.tsx']
+    extensions: ['.js', 'jsx', '.vue'],
+    alias: {
+      'vue$': 'vue/dist/vue.common.js',
+    }
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"inline"'
+      'process.env.NODE_ENV': '"dev"'
     }),
     new webpack.NamedModulesPlugin()
   ],
@@ -37,8 +39,10 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/, loaders: ['babel-loader?cacheDirectory'],
-        exclude: handleModulePath.exclude,
-        include: handleModulePath.include
+        exclude: /node_modules/
+      },
+      {
+        test: /\.vue/, loaders: ['vue-loader']
       },
       {
         test: /\.(ts|tsx)$/,
